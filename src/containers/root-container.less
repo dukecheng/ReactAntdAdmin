@@ -1,0 +1,64 @@
+@import '@/styles/antd.theme.less';
+
+.app-layout {
+    position: relative;
+    top: 0;
+    height: 100vh;
+
+    .logo {
+        height: 32px;
+        background: rgba(255, 255, 255, 0.3);
+        margin: 16px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: @text-color-inverse;
+    }
+
+    .ant-layout-header {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 0;
+
+        .header-left-wrapper {
+            display: inline-flex;
+            align-items: center;
+
+            .ant-breadcrumb-link a {
+                color: @text-color-inverse;
+            }
+
+            .ant-breadcrumb-separator {
+                color: @text-color-inverse;
+            }
+        }
+
+        .sider-trigger {
+            font-size: 18px;
+            line-height: 64px;
+            padding: 0 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+            color: @text-color-inverse;
+        }
+
+        .sider-trigger:hover {
+            color: #1890ff;
+        }
+
+        .profile-link {
+            color: @text-color-inverse;
+        }
+    }
+
+    .ant-layout-content {
+        overflow: auto;
+    }
+
+    .ant-layout-footer {
+        display: flex;
+        justify-content: center;
+        background-color: #ccc;
+    }
+}
