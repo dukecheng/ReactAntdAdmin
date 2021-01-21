@@ -14,13 +14,14 @@ import {
 import { useHistory } from 'react-router-dom';
 import { useUIStore } from '@/hooks';
 import "./root-container.less";
+import FullScreen from '@/components/FullScreen';
 
 const { Header, Content, Footer } = Layout;
 interface ChildrenProps {
     children?: ReactNode;
 }
 
-const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) => {
+const AuthorizedComponents: React.FC<ChildrenProps> = (props: ChildrenProps) => {
     const history = useHistory();
 
     const uiStore = useUIStore();
@@ -54,7 +55,7 @@ const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) =
         <Layout className="app-layout">
             <Sider trigger={null} collapsible collapsed={siderCollapsed}>
                 <div className="logo">
-                    <span>{logoBrandName}</span>
+                    <Link to="/"><span>{logoBrandName}</span></Link>
                 </div>
                 <Menu theme="dark"
                     mode="inline"
@@ -75,18 +76,21 @@ const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) =
                             className: 'sider-trigger',
                             onClick: toggleSiderCollapsed,
                         })}
-                        <Breadcrumb style={{ color: '#fff' }}>
+                        <Breadcrumb style={{ color: '#333' }}>
                             <Breadcrumb.Item><Link to="/react">Home</Link></Breadcrumb.Item>
                             <Breadcrumb.Item><Link to="/react">List</Link></Breadcrumb.Item>
                             <Breadcrumb.Item><Link to="/react">App</Link></Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
-                    <Dropdown overlay={profileMenu}>
-                        <a className="profile-link" onClick={e => e.preventDefault()}>
-                            欢迎您，{uiStore.user_name}
-                            <Avatar style={{ backgroundColor: '#87d068', }} icon={<UserOutlined />} />
-                        </a>
-                    </Dropdown>
+                    <div className="header-right-wrapper">
+                        <FullScreen />
+                        <span className="welcome-info" style={{ color: '#fff' }}>欢迎您，{uiStore.user_name}</span>
+                        <Dropdown overlay={profileMenu}>
+                            <a className="profile-link" onClick={e => e.preventDefault()}>
+                                <Avatar style={{ backgroundColor: '#87d068', }} icon={<UserOutlined />} />
+                            </a>
+                        </Dropdown>
+                    </div>
                 </Header>
                 <Content>
                     <Suspense fallback={<PageChangeLoading />}>
@@ -106,6 +110,26 @@ const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) =
             </Layout>
         </Layout>
     )
+}
+
+const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) => {
+    const history = useHistory();
+
+    const uiStore = useUIStore();
+
+    useEffect(() => {
+        const token = uiStore.token
+        if (!token) {
+            history.push('/login');
+        } else {
+            // service.getAccountInfo({ token }).then((res) => {
+            //   uiStore.setAccountInfo(res)
+            // })
+            // history.push('/')
+        }
+    }, [])
+
+    return uiStore.isAuthorized ? AuthorizedComponents(props) : null;
 })
 
 export default RootContainer;

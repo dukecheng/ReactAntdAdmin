@@ -47,7 +47,7 @@ module.exports = {
         compress: true,
         proxy: {
           '/api': {
-            target: 'https://test.com/',
+            target: 'https://mock.agilelabs.net/react-antd-admin/',
             changeOrigin: true,
             xfwd: false,
           }

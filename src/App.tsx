@@ -11,11 +11,11 @@ import { PageChangeLoading, NoMatchPage } from './utils';
 import RootContainer from './containers/root-container';
 import { AppStore } from './stores/app';
 import { Provider } from 'mobx-react';
-const Login = () => <h3>Login</h3>;
+import { Login } from './views/account';
 moment.locale('zh-cn');
 const defaultStore = new AppStore()
 
-const App: React.FC = (props: any) => {
+const App: React.FC = () => {
   return (
     <ConfigProvider locale={zhCN}>
       {/* <Button type="primary">Button</Button> */}
@@ -25,11 +25,7 @@ const App: React.FC = (props: any) => {
             <Switch>
               <Route path="/404" component={NoMatchPage} />
               <Route path="/login" component={Login} />
-              <Route path="/" >
-                <RootContainer {...props} >
-                  {props.children}
-                </RootContainer>
-              </Route>
+              <Route path="/" component={RootContainer} />
               <Route component={NoMatchPage} />
             </Switch>
           </Suspense>

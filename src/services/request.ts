@@ -20,35 +20,39 @@ request.interceptors.request.use(
 );
 
 request.interceptors.response.use(
-  async (response) => {
-		if (response.status === 200) {
-			// 处理错误提示
-			if (response.data.code !== 200) {
-				// message.error(response.data.msg);
-			}
+	async (response) => {
+		if (response.status === 200 && response.data.code === 200) {
+			return Promise.resolve(response);
 		}
 
-		if (response.data.code === 10000) {
-			// 刷新token
-			// auth.RefreshTokenAsync();
+		// if (response.data.code === 10000) {
+		// 	// 刷新token
+		// 	// auth.RefreshTokenAsync();
 
-			// 上次失败重发
-			const result = await request(response.config);
-			return result;
-		}
+		// 	// 上次失败重发
+		// 	const result = await request(response.config);
+		// 	return result;
+		// }
 
-		return response;
+		return Promise.reject(response);
 	},
 	(error) => {
-		switch (error.response.status) {
-			case 400:
-				break;
-			case 401:
-			case 403:
-			default:
-				message.error(error.response.data.msg);
-				break;
+		if (error && error.response) {
+			switch (error.response.status) {
+				case 400:
+					break;
+				case 401:
+				case 403:
+				default:
+					message.error(error.response.data.msg);
+					break;
+			}
 		}
+		else if (error && error.message) {
+			console.log(error.message);
+			message.error(error.message);
+		}
+		return Promise.reject(error);
 	}
 );
 
