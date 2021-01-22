@@ -1,20 +1,18 @@
-import React, { Suspense, lazy, useEffect, useState, ReactNode } from 'react';
+import React, { Suspense, lazy, ReactNode } from 'react';
 import { observer } from 'mobx-react';
 import { NoMatchPage, PageChangeLoading } from '@/utils';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { Avatar, Breadcrumb, Dropdown, Layout, Menu } from 'antd';
-import Sider from 'antd/lib/layout/Sider';
-import SubMenu from 'antd/lib/menu/SubMenu';
 import {
-    HomeOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import { useUIStore } from '@/hooks';
-import "./root-container.less";
+import "./RootContainer.less";
 import FullScreen from '@/components/FullScreen';
+import { Siderbar } from '.';
 
 const { Header, Content, Footer } = Layout;
 interface ChildrenProps {
@@ -23,52 +21,38 @@ interface ChildrenProps {
 
 const AuthorizedComponents: React.FC<ChildrenProps> = (props: ChildrenProps) => {
     const history = useHistory();
-
     const uiStore = useUIStore();
-
-    const [siderCollapsed, setSiderCollapsed] = useState(false);
-    const defaultLogoBrandName = "React Antd Admin";
-    const shortLogoBrandName = "商户";
-    const [logoBrandName, setLogoBrandName] = useState(defaultLogoBrandName);
-
+    const { siderCollapsed } = uiStore;
+ 
     const toggleSiderCollapsed = () => {
-        setSiderCollapsed(!siderCollapsed);
+        uiStore.setSiderCollapse(!siderCollapsed);
     };
 
-    useEffect(() => {
-        setLogoBrandName(siderCollapsed ? shortLogoBrandName : defaultLogoBrandName)
-    }, [siderCollapsed]);
+
 
     const logout = () => {
         // accountLogout(uiStore.token);
-        // uiStore.removeToken();
+        uiStore.removeToken();
         history.push('/login');
     }
 
+    // useEffect(() => {
+    //     console.log("RootContainer: isAuthorized:" + isAuthorized)
+    //     if (!isAuthorized) {
+    //         history.push('/');
+    //     }
+    // }, [isAuthorized])
+
     const profileMenu = (
         <Menu onClick={logout}>
+            <Menu.Item key='2'>个人信息</Menu.Item>
             <Menu.Item key='1'>退出</Menu.Item>
         </Menu>
     );
 
     return (
         <Layout className="app-layout">
-            <Sider trigger={null} collapsible collapsed={siderCollapsed}>
-                <div className="logo">
-                    <Link to="/"><span>{logoBrandName}</span></Link>
-                </div>
-                <Menu theme="dark"
-                    mode="inline"
-                    defaultSelectedKeys={['1']}
-                    style={{ borderRight: 0 }}
-                >
-                    <Menu.Item key="1" icon={<HomeOutlined />}><Link to="/dashboard">首页</Link></Menu.Item>
-                    <SubMenu key="sub1" title="用户管理" icon={<UserOutlined />}>
-                        <Menu.Item key="2"><Link to="/table1">Table</Link></Menu.Item>
-                        <Menu.Item key="3"><Link to="/table2">Tabke2</Link></Menu.Item>
-                    </SubMenu>
-                </Menu>
-            </Sider>
+            <Siderbar />
             <Layout>
                 <Header>
                     <div className="header-left-wrapper">
@@ -95,7 +79,7 @@ const AuthorizedComponents: React.FC<ChildrenProps> = (props: ChildrenProps) => 
                 <Content>
                     <Suspense fallback={<PageChangeLoading />}>
                         <Switch>
-                            <Route path="/dashboard" component={lazy(() => import('@views/dashboard'))} />
+                            <Route path="/dashboard" component={lazy(() => import('@/views/Dashboard'))} />
                             <Route path="/" exact>
                                 <Redirect to="/dashboard" />
                             </Route>
@@ -113,23 +97,8 @@ const AuthorizedComponents: React.FC<ChildrenProps> = (props: ChildrenProps) => 
 }
 
 const RootContainer: React.FC<ChildrenProps> = observer((props: ChildrenProps) => {
-    const history = useHistory();
-
     const uiStore = useUIStore();
-
-    useEffect(() => {
-        const token = uiStore.token
-        if (!token) {
-            history.push('/login');
-        } else {
-            // service.getAccountInfo({ token }).then((res) => {
-            //   uiStore.setAccountInfo(res)
-            // })
-            // history.push('/')
-        }
-    }, [])
-
-    return uiStore.isAuthorized ? AuthorizedComponents(props) : null;
+    return uiStore.isAuthorized ? AuthorizedComponents(props) : <Redirect to={'/login'} />;
 })
 
 export default RootContainer;

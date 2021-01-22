@@ -1,5 +1,5 @@
 
-import './login.less';
+import './Login.less';
 
 import { Button, Form, Input, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -21,10 +21,10 @@ const Login: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         login(_data).then(res => {
             const result = res.data;
             setLoadingButtonLoading(true);
-            uiStore.setAuthorized();
             uiStore.setToken(result.data.token)
             // uiStore.setAccountInfo(result.data)
             uiStore.setExpires(result.data.expires_in)
+            console.log(uiStore.isAuthorized);
             props.history.push('/')
         }, error => {
             console.log(error);

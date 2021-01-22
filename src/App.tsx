@@ -8,10 +8,10 @@ import moment from 'moment';
 import 'moment/locale/zh-cn';
 import 'antd/dist/antd.css';
 import { PageChangeLoading, NoMatchPage } from './utils';
-import RootContainer from './containers/root-container';
 import { AppStore } from './stores/app';
 import { Provider } from 'mobx-react';
 import { Login } from './views/account';
+import { RootContainer } from './views/layout';
 moment.locale('zh-cn');
 const defaultStore = new AppStore()
 

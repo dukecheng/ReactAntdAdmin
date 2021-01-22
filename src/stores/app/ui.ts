@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx';
+import mobx, { action, autorun, computed, makeAutoObservable, observable } from 'mobx';
 
 import { AppStore } from '.';
 
@@ -7,14 +7,18 @@ interface NoticeMessage {
     message: string;
 }
 export class UIStore {
+    // side收起/展开
+    @observable
+    siderCollapsed: boolean = false;
+
+    @observable
+    isAuthorized: boolean = false;
+
     @observable
     loading?: boolean = false;
 
     @observable
     notice?: NoticeMessage
-
-    @observable
-    isAuthorized = sessionStorage.getItem('token') == "" ? false : true;
 
     @observable
     token: string = sessionStorage.getItem('token') || ''
@@ -30,6 +34,12 @@ export class UIStore {
     constructor(appStore: AppStore) {
         this.appStore = appStore
         makeAutoObservable(this);
+        autorun(() => console.log("UIStore AutoRun IsAuthorized: " + this.isAuthorized));
+    }
+
+    @action
+    setSiderCollapse(value: boolean) {
+        this.siderCollapsed = value;
     }
 
     @action
@@ -59,24 +69,23 @@ export class UIStore {
     }
 
     @action
-    setAuthorized() {
-        this.isAuthorized = true;
-    }
-
-    @action
-    setUnauthorized() {
-        this.isAuthorized = false;
-    }
-    @action
     setToken(value: string) {
         this.token = value
         sessionStorage.setItem('token', value)
+        this.refreshIsAuthorized();
     }
     @action
     removeToken() {
         this.token = ''
         sessionStorage.removeItem('token')
+        this.refreshIsAuthorized();
     }
+
+    @action
+    refreshIsAuthorized() {
+        this.isAuthorized = sessionStorage.getItem('token') !== null;
+    }
+
     @action
     setExpires(value: number) {
         this.expires_in = value
