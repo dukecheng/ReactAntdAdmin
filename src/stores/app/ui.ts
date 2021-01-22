@@ -31,10 +31,15 @@ export class UIStore {
     @observable
     user_name: string = "unknow"
 
+    @observable tags: any[] = [];
+
     constructor(appStore: AppStore) {
         this.appStore = appStore
         makeAutoObservable(this);
+        this.refreshIsAuthorized();
         autorun(() => console.log("UIStore AutoRun IsAuthorized: " + this.isAuthorized));
+        autorun(() => console.log("UIStore AutoRun siderCollapsed: " + this.siderCollapsed));
+        autorun(() => console.log("Tag Counts:" + this.tagCount));
     }
 
     @action
@@ -89,5 +94,22 @@ export class UIStore {
     @action
     setExpires(value: number) {
         this.expires_in = value
+    }
+
+    @computed get tagCount() {
+        return this.tags.length;
+    }
+
+    @action
+    addTag(tag: any) {
+        this.tags.push(tag);
+    }
+    @action
+    removeTag(tagKey: string) {
+        this.tags.forEach(function (item, index, arr) {
+            if (item.path === tagKey) {
+                arr.splice(index, 1);
+            }
+        });
     }
 }

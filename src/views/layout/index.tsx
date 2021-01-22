@@ -1,3 +1,4 @@
 import RootContainer from './RootContainer'
-import Siderbar from './Siderbar'
-export { RootContainer, Siderbar }
+import Sidebar from './Sidebar'
+import TopHeader from './TopHeader'
+export { RootContainer, Sidebar, TopHeader }
