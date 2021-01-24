@@ -1,4 +1,12 @@
-export const menus = [
+export interface IMenuLink {
+    path: string,
+    title: string,
+    icon?: string,
+    permission?: string,
+    children?: IMenuLink[]
+}
+
+export const menus: IMenuLink[] = [
     {
         path: '/dashboard',
         title: '首页',
@@ -161,7 +169,7 @@ export const menus = [
             {
                 path: '/permission/toggle',
                 title: '权限切换',
-                permission: 1
+                permission: "1"
             },
             {
                 path: '/permission/intercept',

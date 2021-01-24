@@ -1,3 +1,4 @@
+import { menus } from '@/router/menu';
 import mobx, { action, autorun, computed, makeAutoObservable, observable } from 'mobx';
 
 import { AppStore } from '.';
@@ -39,7 +40,8 @@ export class UIStore {
         this.appStore = appStore
         makeAutoObservable(this);
         this.refreshIsAuthorized();
-        this.tags.push({ title: "Dashbaord", path: '/dashboard' })
+        const { title, path } = menus[0];
+        this.tags.push({ title, path })
         autorun(() => console.log("UIStore AutoRun IsAuthorized: " + this.isAuthorized));
         autorun(() => console.log("UIStore AutoRun siderCollapsed: " + this.siderCollapsed));
         autorun(() => console.log("Tag Counts:" + this.tagCount));
