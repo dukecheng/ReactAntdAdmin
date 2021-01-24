@@ -33,10 +33,13 @@ export class UIStore {
 
     @observable tags: any[] = [];
 
+    @observable activeTag: string = ''
+
     constructor(appStore: AppStore) {
         this.appStore = appStore
         makeAutoObservable(this);
         this.refreshIsAuthorized();
+        this.tags.push({ title: "Dashbaord", path: '/dashboard' })
         autorun(() => console.log("UIStore AutoRun IsAuthorized: " + this.isAuthorized));
         autorun(() => console.log("UIStore AutoRun siderCollapsed: " + this.siderCollapsed));
         autorun(() => console.log("Tag Counts:" + this.tagCount));
@@ -102,7 +105,21 @@ export class UIStore {
 
     @action
     addTag(tag: any) {
-        this.tags.push(tag);
+        let isContainPath = false;
+
+        // 检查是否已存在path
+        var i = this.tags.length;
+        while (i--) {
+            if (this.tags[i].path === tag.path) {
+                isContainPath = true;
+                break;
+            }
+        }
+
+        if (!isContainPath) {
+            this.tags.push(tag);
+        }
+        this.activeTag = tag.path;
     }
     @action
     removeTag(tagKey: string) {

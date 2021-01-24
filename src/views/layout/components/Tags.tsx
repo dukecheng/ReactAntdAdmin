@@ -1,12 +1,15 @@
 import { useUIStore } from "@/hooks";
+import { observer } from "mobx-react";
 import React from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { useHistory, useLocation } from "react-router-dom";
 import './Tags.scss'
-const Tags = () => {
+
+const Tags: React.FC = observer(() => {
     const location = useLocation();
     const history = useHistory();
     const uiStore = useUIStore();
+
     const { tags: tagList } = uiStore;
 
     const handChangeTag = (activeKey: any) => {
@@ -29,6 +32,7 @@ const Tags = () => {
                 }
             });
         } else {
+            debugger
             uiStore.removeTag(targetKey);
         }
     }
@@ -52,5 +56,5 @@ const Tags = () => {
             </div>
         </div>
     );
-}
+})
 export default Tags

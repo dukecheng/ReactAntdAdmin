@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -9,13 +9,39 @@ import { menus } from '@/router/menu';
 import MenuIcon from './MenuIcon';
 import './Sidebar.less';
 import { routes } from '@/router/routes';
+const findMenu: any | undefined = (menuArray: Array<any>, menupath: any) => {
+    for (var i = 0; i < menuArray.length; i++) {
+        var curMenu = menuArray[i];
+        if (curMenu.children) {
+            var result = findMenu(curMenu.children, menupath);
+            if (result) {
+                return result;
+            }
+        }
 
+        if (curMenu.path === menupath)
+            return curMenu;
+    }
+    return undefined;
+}
 const Siderbar: React.FC = observer(() => {
 
     const defaultLogoBrandName = "React Antd Admin";
     const shortLogoBrandName = "商户";
 
+    const location = useLocation();
     const uiStore = useUIStore();
+
+    // 设置默认激活的菜单
+    const defaultSelectedKeys = [location.pathname];
+
+    // 设置默认的tag
+    var currentActivedMenu = findMenu(menus, location.pathname);
+    if (currentActivedMenu) {
+        const { path, title } = currentActivedMenu;
+        uiStore.addTag({ path, title });
+    }
+
 
     const [logoBrandName, setLogoBrandName] = useState(defaultLogoBrandName);
     useEffect(() => {
@@ -26,13 +52,29 @@ const Siderbar: React.FC = observer(() => {
     // 点击之后加入页签
     const handClickTag = (currentLink: { path: any; title: any; }) => {
         const { path, title } = currentLink;
-        for (let i = 0; i < routes.length; i++) {
-            if (path === routes[i].path) {
-                let obj = { path, title, component: routes[i].component };
-                // this.props.addTag(parent ? Object.assign({}, obj, { parent: parent.title }) : obj);
-                uiStore.addTag(obj);
-            }
+        var matchedRoute = routes.filter((route) => route.path === path);
+        if (matchedRoute.length === 1) {
+            let obj = { path, title, component: matchedRoute[0].component };
+            // this.props.addTag(parent ? Object.assign({}, obj, { parent: parent.title }) : obj);
+            uiStore.addTag(obj);
         }
+        else if (matchedRoute.length === 0) {
+            let obj = { path, title };
+            // this.props.addTag(parent ? Object.assign({}, obj, { parent: parent.title }) : obj);
+            uiStore.addTag(obj);
+        }
+        else {
+            let obj = { path, title, component: <span>Route 配置错误, 找到多个相同的path</span> };
+            uiStore.addTag(obj);
+        }
+
+        // for (let i = 0; i < routes.length; i++) {
+        //     if (path === routes[i].path) {
+        //         let obj = { path, title, component: routes[i].component };
+        //         // this.props.addTag(parent ? Object.assign({}, obj, { parent: parent.title }) : obj);
+        //         uiStore.addTag(obj);
+        //     }
+        // }
     }
 
     // 递归渲染菜单
@@ -72,14 +114,9 @@ const Siderbar: React.FC = observer(() => {
             </div>
             <Menu theme="dark"
                 mode="inline"
-                defaultSelectedKeys={['1']}
+                defaultSelectedKeys={defaultSelectedKeys}
                 style={{ borderRight: 0 }}
             >
-                {/* <Menu.Item key="1" icon={<HomeOutlined />}><Link to="/dashboard">首页</Link></Menu.Item>
-                <SubMenu key="sub1" title="用户管理" icon={<UserOutlined />}>
-                    <Menu.Item key="2"><Link to="/table1">Table</Link></Menu.Item>
-                    <Menu.Item key="3"><Link to="/table2">Tabke2</Link></Menu.Item>
-                </SubMenu> */}
                 {renderMenu(menus)}
             </Menu>
         </Sider>

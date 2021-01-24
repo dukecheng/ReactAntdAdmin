@@ -5,9 +5,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Layout } from 'antd';
 import { useUIStore } from '@/hooks';
 import "./RootContainer.less";
-import { Sidebar, TopHeader } from '.';
+import { Tags, Sidebar, TopHeader } from '.';
 import { routes } from '@/router/routes';
-import Tags from './Tags';
 
 const { Content, Footer } = Layout;
 interface ChildrenProps {
