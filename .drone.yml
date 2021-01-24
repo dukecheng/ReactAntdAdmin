@@ -1,0 +1,41 @@
+kind: pipeline
+type: exec
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build source
+  environment:
+    MAJOR_VERSION: "0"
+    DOCKER_HUB_HOST: 
+      from_secret: hub_host
+    DOCKER_HUB_USERNAME: 
+      from_secret: hub_username
+    DOCKER_HUB_PASSWORD: 
+      from_secret: hub_password
+  commands:
+  - who
+  - whoami
+  - more .env.local
+  - mkdir -p /root/spa_project_build/react_antd_admin/node_modules
+  - docker run --rm 
+    -v /root/.npm:/root/.npm 
+    -v /root/spa_project_build/react_antd_admin/node_modules:/src/node_modules 
+    -v `pwd`:/src
+    --workdir /src node:lts-alpine /bin/sh -c "node --version && pwd && ls -alh && yarn && yarn run build"
+  - cp `pwd`/default.template `pwd`/build
+  - docker build 
+    -t $DOCKER_HUB_HOST/agilelabs/react_antd_admin:$MAJOR_VERSION.$DRONE_BUILD_NUMBER
+    -t $DOCKER_HUB_HOST/agilelabs/react_antd_admin:latest
+    --file `pwd`/Dockerfile `pwd`/build
+  - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD $DOCKER_HUB_HOST
+  - docker push $DOCKER_HUB_HOST/agilelabs/react_antd_admin:$MAJOR_VERSION.$DRONE_BUILD_NUMBER
+  - docker push $DOCKER_HUB_HOST/agilelabs/react_antd_admin:latest
+
+- name: deploy
+  commands:
+  - docker rm agilelabs_react_antd_admin -f || true
+  - docker run -d -it -p 59876:80  --restart always --name agilelabs_react_antd_admin $DOCKER_HUB_HOST/agilelabs/react_antd_admin:$MAJOR_VERSION.$DRONE_BUILD_NUMBER
