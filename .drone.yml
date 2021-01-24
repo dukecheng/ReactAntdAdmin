@@ -34,8 +34,5 @@ steps:
   - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD $DOCKER_HUB_HOST
   - docker push $DOCKER_HUB_HOST/agilelabs/react_antd_admin:$MAJOR_VERSION.$DRONE_BUILD_NUMBER
   - docker push $DOCKER_HUB_HOST/agilelabs/react_antd_admin:latest
-
-- name: deploy
-  commands:
   - docker rm agilelabs_react_antd_admin -f || true
   - docker run -d -it -p 59876:80  --restart always --name agilelabs_react_antd_admin $DOCKER_HUB_HOST/agilelabs/react_antd_admin:$MAJOR_VERSION.$DRONE_BUILD_NUMBER
