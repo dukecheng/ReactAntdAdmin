@@ -1,7 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import Loadable, { OptionsWithoutRender } from 'react-loadable';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LoadingPage } from './utils';
 
