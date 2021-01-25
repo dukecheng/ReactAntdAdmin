@@ -34,6 +34,7 @@ const Siderbar: React.FC = observer(() => {
 
     // 设置默认激活的菜单
     const defaultSelectedKeys = [location.pathname];
+    console.log('Default Selected Keys:' + location.pathname);
 
     // 设置默认的tag
     var currentActivedMenu = findMenu(menus, location.pathname);
@@ -41,7 +42,6 @@ const Siderbar: React.FC = observer(() => {
         const { path, title } = currentActivedMenu;
         uiStore.addTag({ path, title });
     }
-
 
     const [logoBrandName, setLogoBrandName] = useState(defaultLogoBrandName);
     useEffect(() => {
@@ -114,7 +114,7 @@ const Siderbar: React.FC = observer(() => {
             </div>
             <Menu theme="dark"
                 mode="inline"
-                defaultSelectedKeys={defaultSelectedKeys}
+                selectedKeys={[location.pathname]}
                 style={{ borderRight: 0 }}
             >
                 {renderMenu(menus)}

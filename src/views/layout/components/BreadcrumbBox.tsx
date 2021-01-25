@@ -30,7 +30,7 @@ const BreadcrumbBox: React.FC = () => {
     return (
         <Breadcrumb style={{ color: '#333' }}>
             {activedMenus.reverse().map((item, index) => (
-                <Breadcrumb.Item><Link to={item.path}>{item.title}</Link></Breadcrumb.Item>
+                <Breadcrumb.Item key={item.path}><Link to={item.path}>{item.title}</Link></Breadcrumb.Item>
             ))}
         </Breadcrumb>
     )
